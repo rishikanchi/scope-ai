@@ -1,10 +1,20 @@
 import { useState } from "react";
-import { Layers, GitBranch, FileText, MessageSquare, Mail, Database } from "lucide-react";
+import { Layers, GitBranch, FileText, MessageSquare, Mail, Database, Check } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 
-const integrations = [
+type IntegrationType = "Linear" | "GitHub" | "Notion" | "Slack" | "Gmail" | "Supabase";
+
+const integrationColors: Record<IntegrationType, string> = {
+  Linear: "text-int-linear",
+  GitHub: "text-int-github",
+  Notion: "text-int-notion",
+  Slack: "text-int-slack",
+  Gmail: "text-int-gmail",
+  Supabase: "text-int-supabase",
+};
+
+const integrations: { name: IntegrationType; icon: typeof Layers; desc: string; defaultOn: boolean }[] = [
   { name: "Linear", icon: Layers, desc: "Sync tickets, sprints, and project data", defaultOn: true },
   { name: "GitHub", icon: GitBranch, desc: "Access repos, PRs, issues, and diffs", defaultOn: true },
   { name: "Notion", icon: FileText, desc: "Connect pages, databases, and docs", defaultOn: false },
@@ -24,7 +34,7 @@ export default function IntegrationSetup({ open, onOpenChange, onComplete }: Pro
     Object.fromEntries(integrations.map((i) => [i.name, i.defaultOn]))
   );
 
-  const toggle = (name: string) => {
+  const toggle = (name: IntegrationType) => {
     setStates((s) => ({ ...s, [name]: !s[name] }));
   };
 
@@ -37,17 +47,31 @@ export default function IntegrationSetup({ open, onOpenChange, onComplete }: Pro
         </DialogHeader>
         <div className="space-y-3 mt-2">
           {integrations.map((int) => (
-            <div key={int.name} className="flex items-center justify-between p-3 rounded-lg border border-border hover:border-muted-foreground/30 transition-colors">
+            <div 
+              key={int.name} 
+              onClick={() => toggle(int.name)}
+              className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-colors ${
+                states[int.name] 
+                  ? "border-primary/30 bg-primary/5" 
+                  : "border-border hover:border-muted-foreground/30"
+              }`}
+            >
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center">
-                  <int.icon className="w-4 h-4 text-foreground" />
+                  <int.icon className={`w-4 h-4 ${integrationColors[int.name]}`} />
                 </div>
                 <div>
-                  <div className="text-sm font-medium">{int.name}</div>
+                  <div className={`text-sm font-medium ${integrationColors[int.name]}`}>{int.name}</div>
                   <div className="text-[11px] text-muted-foreground">{int.desc}</div>
                 </div>
               </div>
-              <Switch checked={states[int.name]} onCheckedChange={() => toggle(int.name)} />
+              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${
+                states[int.name] 
+                  ? "border-primary bg-primary" 
+                  : "border-muted-foreground/30"
+              }`}>
+                {states[int.name] && <Check className="w-3 h-3 text-primary-foreground" />}
+              </div>
             </div>
           ))}
         </div>

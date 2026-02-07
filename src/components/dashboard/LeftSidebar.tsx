@@ -1,30 +1,40 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   ChevronDown, Plus, Layers, GitBranch, FileText, MessageSquare, Mail, Database,
-  AlertCircle, CheckCircle, Clock
+  Settings, PanelLeftClose, PanelLeft
 } from "lucide-react";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 
 const scopes = ["Mobile App Redesign", "API v3 Launch", "Onboarding Revamp", "Q1 OKR Planning"];
 
-const signals = [
-  { text: "New ticket: ENG-412 Login bug", status: "red" as const, time: "2m ago" },
-  { text: "Deploy succeeded: api-v3 #142", status: "green" as const, time: "8m ago" },
-  { text: "#mobile-dev: crash reports spike", status: "yellow" as const, time: "15m ago" },
-  { text: "Notion: PRD updated by Sarah", status: "green" as const, time: "22m ago" },
-  { text: "Gmail: Partner API key request", status: "yellow" as const, time: "1h ago" },
-  { text: "Linear: Sprint velocity dropped", status: "red" as const, time: "2h ago" },
+type IntegrationType = "Linear" | "GitHub" | "Notion" | "Slack" | "Gmail" | "Supabase";
+
+const integrationColors: Record<IntegrationType, string> = {
+  Linear: "text-int-linear",
+  GitHub: "text-int-github",
+  Notion: "text-int-notion",
+  Slack: "text-int-slack",
+  Gmail: "text-int-gmail",
+  Supabase: "text-int-supabase",
+};
+
+const signals: { text: string; status: "red" | "green" | "yellow"; time: string; integration: IntegrationType }[] = [
+  { text: "New ticket: ENG-412 Login bug", status: "red", time: "2m ago", integration: "Linear" },
+  { text: "Deploy succeeded: api-v3 #142", status: "green", time: "8m ago", integration: "GitHub" },
+  { text: "#mobile-dev: crash reports spike", status: "yellow", time: "15m ago", integration: "Slack" },
+  { text: "PRD updated by Sarah", status: "green", time: "22m ago", integration: "Notion" },
+  { text: "Partner API key request", status: "yellow", time: "1h ago", integration: "Gmail" },
+  { text: "Sprint velocity dropped", status: "red", time: "2h ago", integration: "Linear" },
 ];
 
-const integrations = [
-  { name: "Linear", icon: Layers, connected: true },
-  { name: "GitHub", icon: GitBranch, connected: true },
-  { name: "Notion", icon: FileText, connected: true },
-  { name: "Slack", icon: MessageSquare, connected: true },
-  { name: "Gmail", icon: Mail, connected: false },
-  { name: "Supabase", icon: Database, connected: false },
+const chats = [
+  { id: "1", name: "Auth Fix Planning", active: true },
+  { id: "2", name: "Q1 Roadmap Review", active: false },
+  { id: "3", name: "Performance Analysis", active: false },
 ];
 
 const statusIcon: Record<string, string> = { red: "signal-dot-red", green: "signal-dot-green", yellow: "signal-dot-yellow" };
@@ -33,15 +43,33 @@ interface Props {
   currentScope: string;
   onNewScope: () => void;
   onScopeChange: (s: string) => void;
+  collapsed: boolean;
+  onCollapsedChange: (v: boolean) => void;
 }
 
-export default function LeftSidebar({ currentScope, onNewScope, onScopeChange }: Props) {
+export default function LeftSidebar({ currentScope, onNewScope, onScopeChange, collapsed, onCollapsedChange }: Props) {
+  const navigate = useNavigate();
+  const [activeChat, setActiveChat] = useState("1");
+
+  if (collapsed) {
+    return (
+      <aside className="w-12 border-r border-border flex flex-col shrink-0 bg-card/50 items-center py-3 gap-3">
+        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => onCollapsedChange(false)}>
+          <PanelLeft className="w-4 h-4" />
+        </Button>
+        <Button variant="ghost" size="icon" className="h-8 w-8 mt-auto" onClick={() => navigate("/settings")}>
+          <Settings className="w-4 h-4" />
+        </Button>
+      </aside>
+    );
+  }
+
   return (
     <aside className="w-60 border-r border-border flex flex-col shrink-0 bg-card/50">
       {/* Scope Switcher */}
-      <div className="p-3 border-b border-border">
+      <div className="p-3 border-b border-border flex items-center gap-2">
         <DropdownMenu>
-          <DropdownMenuTrigger className="w-full flex items-center justify-between px-2 py-1.5 rounded-md bg-secondary text-sm font-medium hover:bg-muted transition-colors">
+          <DropdownMenuTrigger className="flex-1 flex items-center justify-between px-2 py-1.5 rounded-md bg-secondary text-sm font-medium hover:bg-muted transition-colors">
             <span className="truncate">{currentScope}</span>
             <ChevronDown className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
           </DropdownMenuTrigger>
@@ -56,6 +84,32 @@ export default function LeftSidebar({ currentScope, onNewScope, onScopeChange }:
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+        <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={() => onCollapsedChange(true)}>
+          <PanelLeftClose className="w-4 h-4" />
+        </Button>
+      </div>
+
+      {/* Chats Section */}
+      <div className="p-3 border-b border-border">
+        <div className="flex items-center justify-between mb-2">
+          <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Chats</div>
+          <Button variant="ghost" size="icon" className="h-5 w-5">
+            <Plus className="w-3 h-3" />
+          </Button>
+        </div>
+        <div className="space-y-0.5">
+          {chats.map((chat) => (
+            <div
+              key={chat.id}
+              onClick={() => setActiveChat(chat.id)}
+              className={`px-2 py-1.5 rounded-md text-xs cursor-pointer transition-colors ${
+                activeChat === chat.id ? "bg-muted text-foreground" : "text-muted-foreground hover:bg-muted/50"
+              }`}
+            >
+              {chat.name}
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Signals Feed */}
@@ -66,7 +120,12 @@ export default function LeftSidebar({ currentScope, onNewScope, onScopeChange }:
             <div key={i} className="flex items-start gap-2 p-2 rounded-md hover:bg-muted/50 cursor-pointer transition-colors">
               <span className={`signal-dot ${statusIcon[sig.status]} mt-1.5 shrink-0`} />
               <div className="min-w-0">
-                <div className="text-xs leading-tight truncate">{sig.text}</div>
+                <div className="flex items-center gap-1.5">
+                  <span className={`text-[10px] font-mono-data font-semibold ${integrationColors[sig.integration]}`}>
+                    {sig.integration}
+                  </span>
+                </div>
+                <div className="text-xs leading-tight mt-0.5">{sig.text}</div>
                 <div className="text-[10px] text-muted-foreground mt-0.5 font-mono-data">{sig.time}</div>
               </div>
             </div>
@@ -74,24 +133,16 @@ export default function LeftSidebar({ currentScope, onNewScope, onScopeChange }:
         </div>
       </div>
 
-      {/* Integration Status */}
+      {/* Settings Button */}
       <div className="p-3 border-t border-border">
-        <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mb-2">Integrations</div>
-        <div className="grid grid-cols-3 gap-2">
-          {integrations.map((int) => (
-            <div
-              key={int.name}
-              className="flex flex-col items-center gap-1 p-1.5 rounded-md hover:bg-muted/50 transition-colors cursor-pointer"
-              title={`${int.name}: ${int.connected ? "Connected" : "Disconnected"}`}
-            >
-              <div className="relative">
-                <int.icon className="w-4 h-4 text-muted-foreground" />
-                <span className={`absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full ${int.connected ? "bg-signal-green" : "bg-signal-red"}`} />
-              </div>
-              <span className="text-[9px] text-muted-foreground">{int.name}</span>
-            </div>
-          ))}
-        </div>
+        <Button 
+          variant="ghost" 
+          className="w-full justify-start gap-2 text-xs text-muted-foreground hover:text-foreground"
+          onClick={() => navigate("/settings")}
+        >
+          <Settings className="w-4 h-4" />
+          Settings
+        </Button>
       </div>
     </aside>
   );

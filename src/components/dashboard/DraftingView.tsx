@@ -1,7 +1,15 @@
 import { useState } from "react";
 import { FileText, Link2, ExternalLink, Layers, MessageSquare, Database } from "lucide-react";
 
-const contextCards = [
+type IntegrationType = "Linear" | "Slack" | "Supabase";
+
+const integrationColors: Record<IntegrationType, string> = {
+  Linear: "text-int-linear",
+  Slack: "text-int-slack",
+  Supabase: "text-int-supabase",
+};
+
+const contextCards: { type: IntegrationType; icon: typeof Layers; title: string; desc: string; status: string }[] = [
   { type: "Linear", icon: Layers, title: "ENG-412", desc: "OAuth redirect loop on mobile Safari", status: "In Progress" },
   { type: "Slack", icon: MessageSquare, title: "#mobile-dev", desc: "Thread: login issues spike after v2.4 deploy", status: "12 replies" },
   { type: "Supabase", icon: Database, title: "auth_sessions", desc: "token_expiry column showing null values for 8% of rows", status: "Live" },
@@ -52,7 +60,7 @@ export default function DraftingView() {
               onClick={() => setActiveRef(0)}
             >
               <Link2 className="w-3 h-3" />
-              See: ENG-412 — OAuth redirect loop
+              See: <span className="text-int-linear">ENG-412</span> — OAuth redirect loop
             </div>
 
             <h2
@@ -75,7 +83,7 @@ export default function DraftingView() {
               onClick={() => setActiveRef(2)}
             >
               <Link2 className="w-3 h-3" />
-              Data: auth_sessions table analysis
+              Data: <span className="text-int-supabase">auth_sessions</span> table analysis
             </div>
 
             <h2
@@ -97,9 +105,9 @@ export default function DraftingView() {
       </div>
 
       {/* Context Rail */}
-      <div className="w-64 overflow-auto p-3 shrink-0">
+      <div className="w-72 overflow-auto p-4 shrink-0">
         <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mb-3">Context</div>
-        <div className="space-y-2">
+        <div className="space-y-3">
           {contextCards.map((card, i) => (
             <div
               key={i}
@@ -111,11 +119,11 @@ export default function DraftingView() {
               }`}
             >
               <div className="flex items-center gap-1.5 mb-1">
-                <card.icon className="w-3 h-3 text-muted-foreground" />
-                <span className="text-[10px] font-mono-data text-muted-foreground">{card.type}</span>
+                <card.icon className={`w-3 h-3 ${integrationColors[card.type]}`} />
+                <span className={`text-[10px] font-mono-data font-semibold ${integrationColors[card.type]}`}>{card.type}</span>
               </div>
-              <div className="text-xs font-semibold">{card.title}</div>
-              <div className="text-[11px] text-muted-foreground mt-0.5 leading-tight">{card.desc}</div>
+              <div className="text-sm font-semibold">{card.title}</div>
+              <div className="text-xs text-muted-foreground mt-0.5 leading-tight">{card.desc}</div>
               <div className="flex items-center justify-between mt-2">
                 <span className="text-[10px] text-muted-foreground">{card.status}</span>
                 <ExternalLink className="w-3 h-3 text-muted-foreground" />
