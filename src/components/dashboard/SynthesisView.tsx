@@ -1,17 +1,30 @@
-import { MessageSquare, Layers, GitBranch, Mail, FileText, Database, AlertTriangle } from "lucide-react";
+import { MessageSquare, Layers, GitBranch, Mail, FileText, Database } from "lucide-react";
 
-type Source = { icon: typeof MessageSquare; label: string; text: string };
+type IntegrationType = "Linear" | "GitHub" | "Notion" | "Slack" | "Gmail" | "Supabase";
+
+type Source = { icon: typeof MessageSquare; label: IntegrationType; text: string };
 
 interface Cluster {
   title: string;
+  description: string;
   count: number;
   severity: "high" | "medium" | "low";
   signals: Source[];
 }
 
+const integrationColors: Record<IntegrationType, string> = {
+  Linear: "text-int-linear",
+  GitHub: "text-int-github",
+  Notion: "text-int-notion",
+  Slack: "text-int-slack",
+  Gmail: "text-int-gmail",
+  Supabase: "text-int-supabase",
+};
+
 const clusters: Cluster[] = [
   {
     title: "Login Failure Reports",
+    description: "Multiple users experiencing authentication failures, primarily on mobile Safari. Root cause appears to be OAuth redirect loop triggered after v2.4 deployment.",
     count: 12,
     severity: "high",
     signals: [
@@ -23,6 +36,7 @@ const clusters: Cluster[] = [
   },
   {
     title: "Performance Degradation",
+    description: "Dashboard load times have increased significantly during peak hours. Database queries showing elevated latency and CPU utilization is higher than normal.",
     count: 8,
     severity: "medium",
     signals: [
@@ -33,6 +47,7 @@ const clusters: Cluster[] = [
   },
   {
     title: "Feature Request: Dark Mode",
+    description: "Growing demand for dark mode support from both enterprise clients citing accessibility requirements and power users preferring reduced eye strain.",
     count: 6,
     severity: "low",
     signals: [
@@ -43,6 +58,7 @@ const clusters: Cluster[] = [
   },
   {
     title: "API v3 Migration Issues",
+    description: "Breaking changes in the new API version causing integration failures for partners. SDK updates needed for compatibility.",
     count: 5,
     severity: "medium",
     signals: [
@@ -52,6 +68,7 @@ const clusters: Cluster[] = [
   },
   {
     title: "Onboarding Drop-off",
+    description: "Significant user drop-off at step 3 of onboarding flow. User research indicates confusion around integration setup process.",
     count: 4,
     severity: "high",
     signals: [
@@ -66,28 +83,35 @@ const severityColor = { high: "signal-dot-red", medium: "signal-dot-yellow", low
 export default function SynthesisView() {
   return (
     <div className="p-4 h-full overflow-auto">
-      <div className="columns-1 md:columns-2 lg:columns-3 gap-4 space-y-4">
+      <div className="max-w-4xl mx-auto space-y-4">
         {clusters.map((cluster) => (
-          <div key={cluster.title} className="break-inside-avoid rounded-lg border border-border bg-card p-4">
+          <div key={cluster.title} className="rounded-lg border border-border bg-card p-5">
             {/* Cluster Header */}
             <div className="flex items-start justify-between mb-3">
               <div className="flex items-center gap-2">
                 <span className={`signal-dot ${severityColor[cluster.severity]}`} />
-                <h3 className="text-sm font-semibold leading-tight">{cluster.title}</h3>
+                <h3 className="text-base font-semibold leading-tight">{cluster.title}</h3>
               </div>
               <span className="text-[10px] font-mono-data text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
-                {cluster.count}
+                {cluster.count} signals
               </span>
             </div>
+            
+            {/* Description */}
+            <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
+              {cluster.description}
+            </p>
 
             {/* Signal Items */}
             <div className="space-y-2">
               {cluster.signals.map((sig, i) => (
-                <div key={i} className="flex items-start gap-2 p-2 rounded-md bg-muted/50 hover:bg-muted transition-colors cursor-pointer">
-                  <sig.icon className="w-3.5 h-3.5 text-muted-foreground mt-0.5 shrink-0" />
-                  <div className="min-w-0">
-                    <span className="text-[10px] font-mono-data text-muted-foreground">{sig.label}</span>
-                    <p className="text-xs leading-tight mt-0.5">{sig.text}</p>
+                <div key={i} className="flex items-start gap-3 p-3 rounded-md bg-muted/50 hover:bg-muted transition-colors cursor-pointer">
+                  <sig.icon className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0" />
+                  <div className="min-w-0 flex-1">
+                    <span className={`text-[10px] font-mono-data font-semibold ${integrationColors[sig.label]}`}>
+                      {sig.label}
+                    </span>
+                    <p className="text-sm leading-tight mt-0.5">{sig.text}</p>
                   </div>
                 </div>
               ))}

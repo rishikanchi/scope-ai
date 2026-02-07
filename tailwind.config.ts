@@ -35,6 +35,14 @@ export default {
           blue: "hsl(var(--signal-blue))",
         },
         surface: "hsl(var(--surface))",
+        integration: {
+          linear: "hsl(var(--int-linear))",
+          github: "hsl(var(--int-github))",
+          notion: "hsl(var(--int-notion))",
+          slack: "hsl(var(--int-slack))",
+          gmail: "hsl(var(--int-gmail))",
+          supabase: "hsl(var(--int-supabase))",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",

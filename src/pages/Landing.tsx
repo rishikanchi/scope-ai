@@ -5,7 +5,18 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const integrations = [
+type IntegrationType = "Linear" | "GitHub" | "Notion" | "Slack" | "Gmail" | "Supabase";
+
+const integrationColors: Record<IntegrationType, string> = {
+  Linear: "text-int-linear",
+  GitHub: "text-int-github",
+  Notion: "text-int-notion",
+  Slack: "text-int-slack",
+  Gmail: "text-int-gmail",
+  Supabase: "text-int-supabase",
+};
+
+const integrations: { name: IntegrationType; icon: typeof Layers; desc: string }[] = [
   { name: "Linear", icon: Layers, desc: "Issue tracking" },
   { name: "GitHub", icon: GitBranch, desc: "Code & PRs" },
   { name: "Notion", icon: FileText, desc: "Documentation" },
@@ -65,23 +76,6 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Dashboard Preview */}
-      <section className="px-6 pb-20">
-        <div className="max-w-5xl mx-auto rounded-xl border border-border bg-card p-1">
-          <div className="rounded-lg bg-muted/50 h-80 flex items-center justify-center">
-            <div className="grid grid-cols-3 gap-4 p-8 w-full max-w-3xl">
-              {stages.map((s) => (
-                <div key={s.name} className="rounded-lg border border-border bg-card p-4 text-center">
-                  <s.icon className="w-6 h-6 text-primary mx-auto mb-2" />
-                  <div className="text-sm font-semibold mb-1">{s.name}</div>
-                  <div className="text-xs text-muted-foreground">{s.desc}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Stages */}
       <section className="px-6 pb-20">
         <div className="max-w-5xl mx-auto">
@@ -112,10 +106,10 @@ export default function Landing() {
             {integrations.map((int) => (
               <div key={int.name} className="flex items-center gap-3 rounded-lg border border-border bg-card p-4 hover:border-primary/30 transition-colors">
                 <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center shrink-0">
-                  <int.icon className="w-5 h-5 text-foreground" />
+                  <int.icon className={`w-5 h-5 ${integrationColors[int.name]}`} />
                 </div>
                 <div>
-                  <div className="text-sm font-semibold">{int.name}</div>
+                  <div className={`text-sm font-semibold ${integrationColors[int.name]}`}>{int.name}</div>
                   <div className="text-xs text-muted-foreground">{int.desc}</div>
                 </div>
               </div>
