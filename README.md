@@ -8,26 +8,30 @@ Scope unifies signal ingestion, analysis, specification drafting, and cross-serv
 
 ## Table of Contents
 
-- [Overview](#overview)
-- [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Architecture](#architecture)
-  - [Signal Flow](#signal-flow)
-  - [AI Tool Categories](#ai-tool-categories)
-- [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-  - [Environment Variables](#environment-variables)
-  - [Database Setup](#database-setup)
-  - [Trigger.dev Setup](#triggerdev-setup)
-  - [Run the Development Server](#run-the-development-server)
-- [Integration Setup](#integration-setup)
-- [Project Structure](#project-structure)
-- [Background Tasks](#background-tasks)
-- [Available Scripts](#available-scripts)
-- [Deployment](#deployment)
-- [Database Schema](#database-schema)
-- [Contributing](#contributing)
+<small>
+
+1. [Overview](#overview)
+2. [Features](#features)
+3. [Tech Stack](#tech-stack)
+4. [Architecture](#architecture)
+   - 4.1 [Signal Flow](#signal-flow)
+   - 4.2 [AI Tool Categories](#ai-tool-categories)
+5. [Getting Started](#getting-started)
+   - 5.1 [Prerequisites](#prerequisites)
+   - 5.2 [Installation](#installation)
+   - 5.3 [Environment Variables](#environment-variables)
+   - 5.4 [Database Setup](#database-setup)
+   - 5.5 [Trigger.dev Setup](#triggerdev-setup)
+   - 5.6 [Run the Development Server](#run-the-development-server)
+6. [Integration Setup](#integration-setup)
+7. [Project Structure](#project-structure)
+8. [Background Tasks](#background-tasks)
+9. [Available Scripts](#available-scripts)
+10. [Deployment](#deployment)
+11. [Database Schema](#database-schema)
+12. [Contributing](#contributing)
+
+</small>
 
 ---
 
